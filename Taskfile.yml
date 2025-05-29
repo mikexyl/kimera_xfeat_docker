@@ -1,0 +1,16 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build the Docker image for Kimera XFeat with RealSense support
+    cmds:
+      - docker build --build-arg BASE_IMAGE=${BASE_IMAGE:-nvcr.io/nvidia/isaac/ros:x86_64-ros2_humble_52e39c39633c15484ec744d5c1921590} -t kimera_xfeat_realsense .
+    env:
+      BASE_IMAGE: nvcr.io/nvidia/isaac/ros:x86_64-ros2_humble_52e39c39633c15484ec744d5c1921590
+
+  build-jetson:
+    desc: Build the Docker image for Jetson (aarch64)
+    cmds:
+      - docker build --build-arg BASE_IMAGE=${BASE_IMAGE:-nvcr.io/nvidia/isaac/ros:aarch64-ros2_humble_1c5650affa65caa30889ccf92f639896} -t kimera_xfeat_realsense_jetson .
+    env:
+      BASE_IMAGE: nvcr.io/nvidia/isaac/ros:aarch64-ros2_humble_1c5650affa65caa30889ccf92f639896
