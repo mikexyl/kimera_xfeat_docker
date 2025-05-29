@@ -26,5 +26,10 @@ RUN source /opt/ros/humble/setup.bash && \
     apt-get install -y ros-humble-realsense2-camera && \
     rm -rf /var/lib/apt/lists/*
 
+# Create v4rl user, add to sudoers, and disable sudo password
+RUN useradd -m -s /bin/bash v4rl && \
+    usermod -aG sudo v4rl && \
+    echo 'v4rl ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
 # Set entrypoint
-CMD ["/bin/bash"]
+CMD ["sleep", "infinity"]
