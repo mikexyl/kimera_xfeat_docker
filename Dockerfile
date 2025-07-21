@@ -1,35 +1,22 @@
 # syntax=docker/dockerfile:1
 
-ARG BASE_IMAGE=nvcr.io/nvidia/isaac/ros:x86_64-ros2_humble_52e39c39633c15484ec744d5c1921590
+
+ARG BASE_IMAGE=dustynv/ros:noetic-desktop-l4t-r35.4.1
+ARG USERNAME=kimera
 FROM ${BASE_IMAGE}
 
-# Install RealSense dependencies and ROS2 packages
+
+# Create user and add to sudoers
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        git \
-        wget \
-        lsb-release \
-        sudo \
-        udev \
-        libssl-dev \
-        libusb-1.0-0-dev \
-        pkg-config \
-        libgtk-3-dev \
-        libglfw3-dev \
-        libgl1-mesa-dev \
-        libglu1-mesa-dev \
-        && rm -rf /var/lib/apt/lists/*
+    apt-get install -y sudo curl && \
+    useradd -m -s /bin/bash "$USERNAME" && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Install ROS2 RealSense wrapper
-RUN source /opt/ros/humble/setup.bash && \
-    apt-get update && \
-    apt-get install -y ros-humble-realsense2-camera && \
-    rm -rf /var/lib/apt/lists/*
-
-# Create v4rl user, add to sudoers, and disable sudo password
-RUN useradd -m -s /bin/bash v4rl && \
-    usermod -aG sudo v4rl && \
-    echo 'v4rl ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# Install pixi for the user
+USER $USERNAME
+RUN curl -fsSL https://pixi.sh/install.sh | bash
+ENV PATH="/home/$USERNAME/.pixi/bin:$PATH"
+USER root
 
 # Set entrypoint
 CMD ["sleep", "infinity"]
